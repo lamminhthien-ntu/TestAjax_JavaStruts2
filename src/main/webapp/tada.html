@@ -7,11 +7,25 @@
     </head>
     <body>
 
-        <form action="login.html" method="post" id="loginForm">
+        <form method="post" id="loginForm">
             <input type="submit" name="testAjax"/>
         </form>
-        
 
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>Percentage</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th class='d-flex justify-content-center'>Chức năng</th>
+                </tr>
+            </thead>
+            <tbody id="student-list"></tbody>
+        </table>
+        
 
 
         <!-- Get json data from server to object through json pare-->

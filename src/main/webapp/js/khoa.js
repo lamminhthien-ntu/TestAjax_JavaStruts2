@@ -1,26 +1,22 @@
 const formDOM = document.querySelector('#loginForm');
-//const errorMsgDOM = document.querySelector('#error-msg');
-const name = document.querySelector('#name');
-const email = document.querySelector('#email');
-const phone = document.querySelector('#phone');
-const percentage = document.querySelector('#percentage');
-
+const studentListDOM = document.querySelector('#student-list');
 
 formDOM.addEventListener('submit', async (event) => {
     event.preventDefault();
-    //errorMsgDOM.textContent = '';
       try{
         //Include json page through Ajax
         const { data } = await axios.get('./khoa/index');
-        console.log(data);
-        //errorMsgDOM.textContent = data.message;
-        //Return data from server to html
-        name.textContent = data.name;
-        email.textContent = data.email;
-        phone.textContent = data.phone;
-        percentage.textContent = data.percentage;
-      }  
+        //console.log(data);
+        const allStudent = data.map((student) => {
+          const {name,id,email,branch,percentage,phone} = student;
+          return `
+            <p>${name} ${id} ${branch} ${percentage} ${email} ${phone}<p>
+          `
+        }).join(' '); 
+        studentListDOM.innerHTML = allStudent;
+      }
       catch(error) {
           //errorMsgDOM.textContent = error.response.data.message;
       }
+      
 });

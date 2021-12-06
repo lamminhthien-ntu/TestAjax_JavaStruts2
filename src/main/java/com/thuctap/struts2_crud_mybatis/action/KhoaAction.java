@@ -7,24 +7,29 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 
+import mybatis.mapper.StudentMapper;
+
 import com.google.gson.Gson;
+import com.thuctap.struts2_crud_mybatis.db.ConnectDB;
 import com.thuctap.struts2_crud_mybatis.model.*;
 
 public class KhoaAction {
-    private List<Student> students;
-    
+    public List<Student> listStudents;
+    private SqlSessionFactory sqlSessionFactory = ConnectDB.getSqlSessionFactory();
 
-    public List<Student> getStudents() {
-        return students;
+    public List<Student> getListStudents() {
+        return listStudents;
     }
 
 
-    public void setStudents(List<Student> students) {
-        this.students = students;
+    public void setListStudents(List<Student> listStudents) {
+        this.listStudents = listStudents;
     }
 
 
@@ -36,22 +41,21 @@ public class KhoaAction {
         PrintWriter printWriter = response.getWriter();
         //response.setStatus(400);
        // printWriter.println("{\"message\":\"" + "Test message" + "\"}");
+        
+       // Mở Session
+        SqlSession session = sqlSessionFactory.openSession();
 
-       //Generate list to prepare convert to json by gson method
-       Student studenta = new Student();
-       studenta.setName("Thien");
-       studenta.setBranch("60cntt1");
-       studenta.setEmail("thien12@gmail.com");
-       studenta.setPercentage(90);
-       studenta.setPhone(8412471);
+        StudentMapper studentMapper = session.getMapper(StudentMapper.class);
 
-       Gson gson = new Gson();
-       String json = gson.toJson(studenta); 
-
+        listStudents = studentMapper.getAll();
        //Convert object to json
-       printWriter.print(json);
-       
+       Gson gson = new Gson();
+       String json = gson.toJson(listStudents); 
 
+       printWriter.print(json);
+
+       System.out.print(json);
+       
         printWriter.flush();
         printWriter.close();
     
