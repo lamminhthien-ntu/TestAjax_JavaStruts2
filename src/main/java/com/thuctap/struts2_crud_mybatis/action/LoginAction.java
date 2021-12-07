@@ -1,11 +1,22 @@
 package com.thuctap.struts2_crud_mybatis.action;
 
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import com.opensymphony.xwork2.ActionSupport;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
 import org.apache.struts2.interceptor.SessionAware;
+import com.thuctap.struts2_crud_mybatis.errors.*;
 public class LoginAction extends ActionSupport implements SessionAware{
+    //Respone hay dùng cho AJAX và JSON
+    HttpServletResponse response = ServletActionContext.getResponse();
 
     private String username,password;
     private Map<String, Object> sessionMap ;
@@ -31,12 +42,13 @@ public class LoginAction extends ActionSupport implements SessionAware{
         @Result(name = "success",location = "/index.html"),
         @Result(name = "input",location = "/login.html")
     })
-    public String login() {
+    public String login() throws IOException {
         String loggedUserName = null;
  
         // check if the userName is already stored in the session
         if (sessionMap.containsKey("userName")) {
             loggedUserName = (String) sessionMap.get("userName");
+           
         }
         if (loggedUserName != null && loggedUserName.equals("admin")) {
             return SUCCESS; // return welcome page
@@ -54,7 +66,13 @@ public class LoginAction extends ActionSupport implements SessionAware{
         }   
          
         // in other cases, return login page
-        return INPUT;
+        // Tạo một danh sách các lỗi bằng json thông qua Class ValidateError
+                ArrayList<String> messages = new ArrayList<String>();
+                messages.add("Username không hợp lệ" + username);
+                messages.add("Password không hợp lệ" +password);
+                PrintWriter printWriter = response.getWriter();
+                 return ValidateError.push(messages, 400, response, printWriter);
+                
     }
    
 
