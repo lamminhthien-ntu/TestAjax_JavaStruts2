@@ -246,7 +246,7 @@ public class StudentAction extends ActionSupport {
         student.setPercentage(percentage);
         student.setPhone(phone);
         student.setEmail(email);
-        studentMapper.update(student);
+        studentMapper.update(student);  
 
         Gson gson = new Gson();
         String json = gson.toJson(student);
