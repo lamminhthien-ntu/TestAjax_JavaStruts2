@@ -7,18 +7,16 @@ const checkLogined = async () => {
         
     }
 }
-
 const validateLoginForm = async () => {
     //Hiên thị thông báo lỗi
     const loginErrorMessage = document.querySelector('#login_error');
     const passwordErrorMessage = document.querySelector('#password_error');
 
-    //Lấy dữ liệu usernmae và password
-    const username = document.querySelector('#username').value;
-    const password = document.querySelector('#password').value;
+    const formDOM = document.querySelector('#loginForm');
+    const formData = new FormData(formDOM);
     //Thực hiện request
     try {
-         await axios.post(`./login?username=${username}&password=${password}`);
+         await axios.post(`./login`,formData);
          window.location.href = "./login";
     } catch (error) {
         //Khi có lỗi thì 
