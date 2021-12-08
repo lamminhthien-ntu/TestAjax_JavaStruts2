@@ -1,3 +1,4 @@
+console.log("Fuck you tomcat");
 const checkLogined = async () => {
     try {
         await axios.post(`./login`);
