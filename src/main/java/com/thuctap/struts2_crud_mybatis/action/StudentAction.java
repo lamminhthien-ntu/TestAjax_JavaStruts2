@@ -1,7 +1,6 @@
 package com.thuctap.struts2_crud_mybatis.action;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,7 +11,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
-import org.apache.struts2.interceptor.SessionAware;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
@@ -28,19 +26,7 @@ import mybatis.mapper.StudentMapper;
     "actionName", "bad-request"
 })
 @Namespace("/api/v1/student")
-public class StudentAction extends ActionSupport implements SessionAware{
-
-    
-    private Map<String, Object> sessionMap ;
-
-    public Map<String, Object> getSessionMap() {
-        return sessionMap;
-    }
-
-
-    public void setSessionMap(Map<String, Object> sessionMap) {
-        this.sessionMap = sessionMap;
-    }
+public class StudentAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
     private List<Student> listStudents;
@@ -64,7 +50,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
     }
 
     @Actions({
-            @Action(value = "/student/index", results = { @Result(location = "/index.html") }),
+            @Action(value = "/student/index", results = { @Result(location = "/index.jsp") }),
             @Action(value = "/student/create", results = { @Result(location = "/create.html") }),
             @Action(value = "/student/edit/*", results = { @Result(location = "/edit.html") }),
     })
@@ -73,14 +59,8 @@ public class StudentAction extends ActionSupport implements SessionAware{
     }
 
     /* api */
-    @Action(value = "list", results = { @Result(location = "/index.html") })
+    @Action(value = "list", results = { @Result(location = "/index.jsp") })
     public String getAllStudents() throws IOException {
-        String loggedUserName = null;
-        // check if the userName is already stored in the session
-        if (sessionMap.containsKey("userName")) {
-            loggedUserName = (String) sessionMap.get("userName");
-        }
-        System.out.println(loggedUserName);
         // Mở Session
         SqlSession session = sqlSessionFactory.openSession();
 
@@ -176,7 +156,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
     }
 
     @Action(value = "create", results = {
-            @Result(name = "success", location = "/index.html"),
+            @Result(name = "success", location = "/index.jsp"),
     })
     public String createStudent() throws IOException {
         HttpServletResponse response = ServletActionContext.getResponse();
@@ -212,7 +192,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
     // get student by id
 
     @Action(value = "*", params = { "id", "{1}" }, results = {
-            @Result(location = "/index.html"),
+            @Result(location = "/index.jsp"),
     })
     public String getStudent() throws IOException {
         HttpServletResponse response = ServletActionContext.getResponse();
@@ -242,7 +222,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
     // edit student
 
     @Action(value = "/api/v1/student/edit/*", params = { "id", "{1}" }, results = {
-            @Result(name = "success", location = "/index.html"),
+            @Result(name = "success", location = "/index.jsp"),
     })
     public String editStudent() throws IOException {
         HttpServletResponse response = ServletActionContext.getResponse();
@@ -266,7 +246,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
         student.setPercentage(percentage);
         student.setPhone(phone);
         student.setEmail(email);
-        studentMapper.update(student);  
+        studentMapper.update(student);
 
         Gson gson = new Gson();
         String json = gson.toJson(student);
@@ -284,7 +264,7 @@ public class StudentAction extends ActionSupport implements SessionAware{
     // delete student
 
     @Action(value = "/api/v1/student/delete/*", params = { "id", "{1}" }, results = {
-            @Result(location = "/index.html") })
+            @Result(location = "/index.jsp") })
     public String deleteStudent() {
         SqlSession session = sqlSessionFactory.openSession();
         StudentMapper studentMapper = session.getMapper(StudentMapper.class);
@@ -292,12 +272,5 @@ public class StudentAction extends ActionSupport implements SessionAware{
         session.commit();
         session.close();
         return SUCCESS;
-    }
-
-    @Override
-    public void setSession(Map<String, Object> session) {
-        this.sessionMap = session;
-        // TODO Auto-generated method stub
-        
     }
 }
