@@ -1,7 +1,6 @@
 package com.thuctap.struts2_crud_mybatis.action;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +28,9 @@ import mybatis.mapper.StudentMapper;
     "actionName", "bad-request"
 })
 @Namespace("/api/v1/student")
-public class StudentAction extends ActionSupport{
-    //Tạo đối tượng session dựa trên request của Servlet
+public class StudentAction extends ActionSupport {
+    
+    // Khởi tạo HttpSession
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpSession session = request.getSession();
 
@@ -63,15 +63,14 @@ public class StudentAction extends ActionSupport{
     public String viewStudent() {
         return SUCCESS;
     }
-    
 
     /* api */
     @Action(value = "list", results = { @Result(location = "/index.html") })
     public String getAllStudents() throws IOException {
-        String loggedUserName = (String) session.getAttribute("userName");
-        // check if the userName is already stored in the session
-        if (loggedUserName=="admin") {
-                // Mở Session
+        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpSession session = request.getSession();
+
+        // Mở Session
         SqlSession sessionSQL = sqlSessionFactory.openSession();
 
         // Tạo instance cho Interface StudentMapper (Chính là file lưu trữ các code truy
@@ -80,28 +79,29 @@ public class StudentAction extends ActionSupport{
 
         // Lấy dữ liệu sinh viên
         // System.out.println(search);
-        listStudents = studentMapper.search(search);
+        if (session.getAttribute("userName").equals("admin"))
+        {
+            listStudents = studentMapper.search(search);
+            // chuyển danh sách học sinh sang json
+            Gson gson = new Gson();
+            String json = gson.toJson(listStudents);
 
-        // chuyển danh sách học sinh sang json
-        Gson gson = new Gson();
-        String json = gson.toJson(listStudents);
+            // trả về kết quả là json
+            HttpServletResponse response = ServletActionContext.getResponse();
+            response.setContentType("application/json;charset=utf-8");
+            response.setHeader("Cache-Control", "no-cache");
+            PrintWriter printWriter = response.getWriter();
+            printWriter.print(json);
+            printWriter.flush();
+            printWriter.close();
 
-        // trả về kết quả là json
-        HttpServletResponse response = ServletActionContext.getResponse();
-        response.setContentType("application/json;charset=utf-8");
-        response.setHeader("Cache-Control", "no-cache");
-        PrintWriter printWriter = response.getWriter();
-        printWriter.print(json);
-        printWriter.flush();
-        printWriter.close();
+            // System.out.println(json);
 
-        // System.out.println(json);
+           
         }
-        System.out.println(loggedUserName);
+        
         return SUCCESS;
     }
-
-
 
     /*  */
     // region getters setters
@@ -259,7 +259,7 @@ public class StudentAction extends ActionSupport{
         student.setPercentage(percentage);
         student.setPhone(phone);
         student.setEmail(email);
-        studentMapper.update(student);  
+        studentMapper.update(student);
 
         Gson gson = new Gson();
         String json = gson.toJson(student);

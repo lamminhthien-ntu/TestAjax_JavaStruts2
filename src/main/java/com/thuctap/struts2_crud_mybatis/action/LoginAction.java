@@ -42,29 +42,24 @@ public class LoginAction extends ActionSupport{
         @Result(name = "input",location = "/login.html")
     })
     public String login() throws IOException {
-        //Phương thức gán giá trị session
-        session.setAttribute("userName", "admin");
-
         //Phương thức lấy giá trị session
         String loggedUserName = (String) session.getAttribute("userName");
         //Thử in ra giá trị của session
         System.out.println(loggedUserName);
- 
-
-        // if (loggedUserName != null && loggedUserName.equals("admin")) {
-        //     return SUCCESS; // return welcome page
-        // }
+        if (loggedUserName != null && loggedUserName.equals("admin")) {
+            return SUCCESS; // return welcome page
+        }
          
-        // // if no userName stored in the session,
-        // // check the entered userName and password
-        // if (username != null && username.equals("admin")
-        //         && password != null && password.equals("admin")) {
+        // if no userName stored in the session,
+        // check the entered userName and password
+        if (username != null && username.equals("admin")
+                && password != null && password.equals("admin")) {
              
-        //     // add userName to the session
-        //     sessionMap.put("userName", username);
+            // add userName to the session
+            session.setAttribute("userName", username);
              
-        //     return SUCCESS; // return welcome page
-        // }   
+            return SUCCESS; // return welcome page
+        }   
          
         // in other cases, return login page
         // Tạo một danh sách các lỗi bằng json thông qua Class ValidateError
