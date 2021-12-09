@@ -51,8 +51,8 @@ public class RegisterAction extends ActionSupport{
         } else
                 {
                     ArrayList<String> messages = new ArrayList<String>();
-                messages.add("Username không hợp lệ " + username);
-                messages.add("Password không hợp lệ " + password);
+                messages.add("Username Tối thiểu 6 ký tự và tối đa 14 kí tự, ít nhất một chữ cái và một số, không có kí tự khoảng trắng ");
+                messages.add("Password Tối thiểu 8 và tối đa 14 ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt, không có khoảng trắng ");
                 PrintWriter printWriter = response.getWriter();
                  return ValidateError.push(messages, 400, response, printWriter);
                 }
