@@ -2,7 +2,7 @@ const searchFormDOM = document.querySelector('#search-form');
 const searchInputDOM = document.querySelector('#search');
 const studentListDOM = document.querySelector('#student-list');
 
-
+console.log("Fuck /Desktop");
 const showStudentList = async () => {
     studentListDOM.textContent = 'Loading...';
     const params = window.location.search;

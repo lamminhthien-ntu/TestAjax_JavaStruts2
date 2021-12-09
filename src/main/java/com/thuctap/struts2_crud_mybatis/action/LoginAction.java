@@ -6,25 +6,24 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
-import org.apache.struts2.interceptor.SessionAware;
 import com.thuctap.struts2_crud_mybatis.errors.*;
-public class LoginAction extends ActionSupport implements SessionAware{
+public class LoginAction extends ActionSupport{
     //Respone hay dùng cho AJAX và JSON
     HttpServletResponse response = ServletActionContext.getResponse();
+    HttpServletRequest request = ServletActionContext.getRequest();
+    HttpSession session = request.getSession();
+
 
     private String username,password;
-    private Map<String, Object> sessionMap ;
 
-    
-    public Map<String, Object> getUserSession() {
-        return sessionMap;
-    }
     public String getUsername() {
         return username;
     }
@@ -43,27 +42,29 @@ public class LoginAction extends ActionSupport implements SessionAware{
         @Result(name = "input",location = "/login.html")
     })
     public String login() throws IOException {
-        String loggedUserName = null;
+        //Phương thức gán giá trị session
+        session.setAttribute("userName", "admin");
+
+        //Phương thức lấy giá trị session
+        String loggedUserName = (String) session.getAttribute("userName");
+        //Thử in ra giá trị của session
+        System.out.println(loggedUserName);
  
-        // check if the userName is already stored in the session
-        if (sessionMap.containsKey("userName")) {
-            loggedUserName = (String) sessionMap.get("userName");
-           
-        }
-        if (loggedUserName != null && loggedUserName.equals("admin")) {
-            return SUCCESS; // return welcome page
-        }
+
+        // if (loggedUserName != null && loggedUserName.equals("admin")) {
+        //     return SUCCESS; // return welcome page
+        // }
          
-        // if no userName stored in the session,
-        // check the entered userName and password
-        if (username != null && username.equals("admin")
-                && password != null && password.equals("admin")) {
+        // // if no userName stored in the session,
+        // // check the entered userName and password
+        // if (username != null && username.equals("admin")
+        //         && password != null && password.equals("admin")) {
              
-            // add userName to the session
-            sessionMap.put("userName", username);
+        //     // add userName to the session
+        //     sessionMap.put("userName", username);
              
-            return SUCCESS; // return welcome page
-        }   
+        //     return SUCCESS; // return welcome page
+        // }   
          
         // in other cases, return login page
         // Tạo một danh sách các lỗi bằng json thông qua Class ValidateError
@@ -75,13 +76,4 @@ public class LoginAction extends ActionSupport implements SessionAware{
                 
     }
    
-
-
-    @Override
-    public void setSession(Map<String, Object> sessionMap) {
-        this.sessionMap = sessionMap;
-        // TODO Auto-generated method stub
-        
-    }
-    
 }

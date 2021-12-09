@@ -3,7 +3,9 @@ package com.thuctap.struts2_crud_mybatis.action;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +14,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
-import org.apache.struts2.interceptor.SessionAware;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
@@ -28,19 +29,10 @@ import mybatis.mapper.StudentMapper;
     "actionName", "bad-request"
 })
 @Namespace("/api/v1/student")
-public class StudentAction extends ActionSupport implements SessionAware{
-
-    
-    private Map<String, Object> sessionMap ;
-
-    public Map<String, Object> getSessionMap() {
-        return sessionMap;
-    }
-
-
-    public void setSessionMap(Map<String, Object> sessionMap) {
-        this.sessionMap = sessionMap;
-    }
+public class StudentAction extends ActionSupport{
+    //Tạo đối tượng session dựa trên request của Servlet
+    HttpServletRequest request = ServletActionContext.getRequest();
+    HttpSession session = request.getSession();
 
     private static final long serialVersionUID = 1L;
     private List<Student> listStudents;
@@ -71,22 +63,20 @@ public class StudentAction extends ActionSupport implements SessionAware{
     public String viewStudent() {
         return SUCCESS;
     }
+    
 
     /* api */
     @Action(value = "list", results = { @Result(location = "/index.html") })
     public String getAllStudents() throws IOException {
-        String loggedUserName = null;
+        String loggedUserName = (String) session.getAttribute("userName");
         // check if the userName is already stored in the session
-        if (sessionMap.containsKey("userName")) {
-            loggedUserName = (String) sessionMap.get("userName");
-        }
-        System.out.println(loggedUserName);
-        // Mở Session
-        SqlSession session = sqlSessionFactory.openSession();
+        if (loggedUserName=="admin") {
+                // Mở Session
+        SqlSession sessionSQL = sqlSessionFactory.openSession();
 
         // Tạo instance cho Interface StudentMapper (Chính là file lưu trữ các code truy
         // vấn sql bằng mybatis annotation)
-        StudentMapper studentMapper = session.getMapper(StudentMapper.class);
+        StudentMapper studentMapper = sessionSQL.getMapper(StudentMapper.class);
 
         // Lấy dữ liệu sinh viên
         // System.out.println(search);
@@ -106,9 +96,12 @@ public class StudentAction extends ActionSupport implements SessionAware{
         printWriter.close();
 
         // System.out.println(json);
-
+        }
+        System.out.println(loggedUserName);
         return SUCCESS;
     }
+
+
 
     /*  */
     // region getters setters
@@ -292,12 +285,5 @@ public class StudentAction extends ActionSupport implements SessionAware{
         session.commit();
         session.close();
         return SUCCESS;
-    }
-
-    @Override
-    public void setSession(Map<String, Object> session) {
-        this.sessionMap = session;
-        // TODO Auto-generated method stub
-        
     }
 }
