@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TMDT</name>
+	<name>struts2_crud_mybatis</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -36,7 +36,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1638933167479</id>
+			<id>1638435459773</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
