@@ -1,60 +1,53 @@
-console.log("Fuck you tomcat!!!");
-
+const formDOM = document.querySelector('#registerForm');
+const userNameErrorMessage = document.querySelector('#username_error');
+const passwordErrorMessage = document.querySelector('#password_error');
 
 const validateRegisterForm = async () => {
-    //Hiên thị thông báo lỗi
-    const userNameErrorMessage = document.querySelector('#username_error');
-    const passwordErrorMessage = document.querySelector('#password_error');
-
-    const formDOM = document.querySelector('#registerForm');
     const formData = new FormData(formDOM);
     //Thực hiện request
     try {
-         await axios.post(`./register`,formData);
-         window.location.href = "./register_success.html";
+        await axios.post(`./registerAction`, formData);
+        window.location.href = "./";
     } catch (error) {
-        //Khi có lỗi thì 
-           const data = error.response.data;
-            console.log(data);
-            userNameErrorMessage.innerHTML=data[0];
-            passwordErrorMessage.innerHTML=data[1];
+        const data = error.response.data;
+        console.log(data);
+        userNameErrorMessage.textContent = data.username ?? "";
+        passwordErrorMessage.textContent = data.password ?? "";
     }
 }
 
-function validateUNameFrontEnd(){    
+function validateUNameFrontEnd() {
     var username = document.getElementById("username").value;
     console.log(username);
 
-    if (!username.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,14}$/g))
-        {
-            document.getElementById("username_error").innerHTML=`
+    if (!username.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,14}$/)) {
+        userNameErrorMessage.textContent = `
             Username Tối thiểu 6 ký tự và tối đa 14 kí tự,
             ít nhất một chữ cái và một số, không có kí tự khoảng trắng
             `;
-        }
+    }
     else {
-            document.getElementById("username_error").innerHTML=`Username hợp lệ`;
+        userNameErrorMessage.textContent = `Username đúng quy tắc`;
     }
 
-}  
+}
 
-function validatePasswordFrontEnd(){    
+function validatePasswordFrontEnd() {
     var password = document.getElementById("password").value;
     console.log(password);
 
-    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,14}$/g))
-        {
-            document.getElementById("password_error").innerHTML=`
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,14}$/)) {
+        passwordErrorMessage.textContent = `
             Password Tối thiểu 8 và tối đa 14 ký tự, 
             ít nhất một chữ cái viết hoa, một chữ cái viết thường,
              một số và một ký tự đặc biệt, không có khoảng trắng
             `;
-        }
+    }
     else {
-            document.getElementById("password_error").innerHTML=`Password hợp lệ`;
+        passwordErrorMessage.textContent = `Password đúng quy tắc`;
     }
 
-}  
+}
 
 
 
