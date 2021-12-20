@@ -20,7 +20,7 @@ static SqlSessionFactory sqlSessionFactory = ConnectDB.getSqlSessionFactory();
       // s.name, k.TenKhoa
     SqlSession sqlSession = sqlSessionFactory.openSession();
     KhoaStudentMapper khoaStudentMapper = sqlSession.getMapper(KhoaStudentMapper.class);
-     List<Map<String,Object>> khoaStudent = khoaStudentMapper.getAll("H6bz8mNh","lamminhthien@gmail.com");
+     List<Map<String,Object>> khoaStudent = khoaStudentMapper.getAll("H6bz8mNh4214124241244124","lamminhthien@gmail.com");
      
    //List<KhoaStudent> khoaStudent = khoaStudentMapper.getAll("s.name","k.TenKhoa");
   
